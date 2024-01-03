@@ -1,56 +1,29 @@
-# Import necessary libraries
 import pandas as pd
-import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Mount Google Drive for dataset access in Google Colab
-from google.colab import drive
-drive.mount('/content/drive')
+url = "/content/drive/MyDrive/test.csv"
+titanic_df = pd.read_csv(url)
 
-# Load dataset into a Pandas DataFrame
-df = pd.read_csv('/content/drive/MyDrive/UCI_Credit_Card.csv')
+print(titanic_df.head())
 
-# Display dataset information
-print(df.info())
+print(titanic_df.isnull().sum())
+titanic_df['Age'].fillna(titanic_df['Age'].median(), inplace=True)
+sns.histplot(titanic_df['Age'], bins=30, kde=True)
+plt.title('Distribution of Age')
+plt.show()
 
-# Display summary statistics of the dataset
-print(df.describe())
-
-# Check for missing values
-print(df.isnull().sum())
-
-# Define categorical variables for analysis
-categorical_vars = ['SEX', 'EDUCATION', 'MARRIAGE']
-
-# Specify colors for each category in visualizations
-colors = ['skyblue', 'lightcoral']
-
-# Visualize distribution of categorical variables with respect to the target variable
-for var in categorical_vars:
-    sns.countplot(x=var, hue='default.payment.next.month', data=df, palette=colors)
-    plt.title(f'Distribution of {var} and Default Status')
-    plt.show()
-
-# Define numerical variables for analysis
-numerical_vars = ['LIMIT_BAL', 'AGE', 'PAY_0', 'BILL_AMT1', 'PAY_AMT1']
-
-# Visualize distribution of numerical variables using histograms
-for var in numerical_vars:
-    sns.histplot(df[var], kde=True)
-    plt.title(f'Distribution of {var}')
-    plt.show()
-
-# Visualize the correlation matrix using a heatmap
-plt.figure(figsize=(16, 10))
-sns.heatmap(df.corr(), cmap='coolwarm', annot=True)
+sns.countplot(x='Sex', data=titanic_df)
+plt.title('Passenger Gender Distribution')
+plt.show()
+sns.countplot(x='Sex', hue='Cabin', data=titanic_df)
+plt.title('Survival by Passenger Class')
+plt.show()
+sns.boxplot(x='Pclass', y='Age', data=titanic_df)
+plt.title('Survival by Age')
+plt.show()
+correlation_matrix = titanic_df.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
 plt.title('Correlation Matrix')
 plt.show()
-
-# Visualize the distribution of the target variable
-sns.countplot(x='default.payment.next.month', data=df, color='skyblue')
-plt.title('Distribution of Default Status')
-plt.show()
-
-
-# Print a message indicating successful execution of the code
-print("Analysis and visualizations completed successfully.")
